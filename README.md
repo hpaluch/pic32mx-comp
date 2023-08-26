@@ -13,10 +13,11 @@ Project status:
 
 Example UART output (115200 baud, 8 data-bits, 1 stop, no parity, no flow control) on Pin21 U2TX:
 ```
-../src/main.c:55 starting app v1.00
- Uptime=1 [s]
- Uptime=2 [s]
+../src/main.c:63 starting app v1.01
+ CPU Frequency=47999998 [Hz]
  Uptime=3 [s]
+ Uptime=4 [s]
+ Uptime=5 [s]
  ...
 ```
 
