@@ -68,8 +68,10 @@ void GPIO_Initialize ( void )
 
 
     /* PPS Input Remapping */
+    U2RXR = 3;
 
     /* PPS Output Remapping */
+    RPB10R = 2;
 
 
 }
