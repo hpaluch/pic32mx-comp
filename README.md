@@ -57,9 +57,12 @@ build in MPLAB Toolbar.
 * USB to UART Adapter, tested:
   [USB Console Cable #954][USB Console Cable #954]
 
-PIC32MX is 32-bit `MIPS32(R) 4K` based CPU
+PIC32MX is 32-bit `MIPS32(R) M4K` based CPU
 - PIC32MX datasheet: [PIC32MX250F128B][PIC32MX250F128B]
-- MIPS32 4K datasheet: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00086-2B-MIPS32BIS-AFP-05.04.pdf
+- [MIPS32 M4K Manual][MIPS32 M4K Manual] from mips.com
+- [MIPS32 M4K Core Datasheet][MIPS32 M4K DTS] from mips.com
+- [MIPS32 Instruction Set][MIPS32 BIS] from mips.com
+- [MIPS32 Instruction Set Quick Reference][MIPS32 QRC] from mips.com
 
 # Software requirements
 
@@ -90,7 +93,7 @@ NOTE: Pin 21 and Pin 22 are 5V tolerant, which is good thing - so you
 can use basically any USB <-> UART cable - both 3.3V TTL and 5V TTL should
 work.
 
-But do NOT connect RS232 convertes! They use +/-12V which will surely
+But do NOT connect RS232 converters! They use +/-12V which will surely
 blow CPU!
 
 Use these parameters when connecting Putty to USB/UART Adapter:
@@ -114,7 +117,7 @@ old authentic chips (that were indistinguishable from clones)!
 For Windows 10 there exist easy workaround:
 - select Update Driver
 - select I will pick driver
-- if there  is already shown single item list of drivers then
+- if there is already shown single item list of drivers then
   UNCHECK "Show compatible drivers only"
 - now select Vendor "Microsoft"
 - and Driver "USB Serial Device"
@@ -123,9 +126,10 @@ For Windows 10 there exist easy workaround:
 - now Windows 10 Generic driver should be installed and working
 
 
-Is URL below correct?
-
-[MIPS32 M4K Manual]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00016-2B-4K-SUM-01.18.pdf
+[MIPS32 M4K Manual]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00249-2B-M4K-SUM-02.03.pdf
+[MIPS32 M4K DTS]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00247-2B-M4K-DTS-02.01.pdf
+[MIPS32 BIS]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00086-2B-MIPS32BIS-AFP-05.04.pdf
+[MIPS32 QRC]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00565-2B-MIPS32-QRC-01.01.pdf 
 [Harmony]: https://www.microchip.com/mplab/mplab-harmony
 [XC compilers]: https://www.microchip.com/mplab/compilers
 [MPLAB X IDE]: https://www.microchip.com/mplab/mplab-x-ide
