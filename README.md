@@ -38,7 +38,7 @@ Used CPU blocks:
     and Register 11 (Compare)
   - Interrupt is acknowledge by writing to Compare register (!)
   - please see Page 73 (real page 83) of 
-    [MIPS32(R) M4K Manual][MIPS32(R) M4K Manual]
+    [MIPS32(R) M4K Manual][MIPS32 M4K Manual]
   - it is similar to SYSTICK on ARM Cortex-M CPUs
 
 Thanks to "After Build" command you can see generated assembler
@@ -124,7 +124,8 @@ For Windows 10 there exist easy workaround:
 
 
 Is URL below correct?
-[MIPS32(R) M4K Manual]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00016-2B-4K-SUM-01.18.pdf
+
+[MIPS32 M4K Manual]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00016-2B-4K-SUM-01.18.pdf
 [Harmony]: https://www.microchip.com/mplab/mplab-harmony
 [XC compilers]: https://www.microchip.com/mplab/compilers
 [MPLAB X IDE]: https://www.microchip.com/mplab/mplab-x-ide
