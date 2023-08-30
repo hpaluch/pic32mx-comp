@@ -233,6 +233,12 @@ For Windows 10 there exist easy workaround:
 If measured frequency is 2 times higher it is very likely that
 comparator is oscillating. I plan to fix that with adding hysteresis (TODO).
 
+# Notes
+
+Why not using "Shadow register set" to reduce interrupt latency?
+- because the HSS of CP0,SRSCtl register equals to 0, which means that
+  this CPU has 0 Shadow register sets...
+
 [Digilent AD2]: https://digilent.com/shop/analog-discovery-2-100ms-s-usb-oscilloscope-logic-analyzer-and-variable-power-supply/
 [MIPS32 M4K Manual]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00249-2B-M4K-SUM-02.03.pdf
 [MIPS32 M4K DTS]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00247-2B-M4K-DTS-02.01.pdf

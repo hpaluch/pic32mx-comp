@@ -3,6 +3,9 @@
 *.bmp
 # PhotoScape
 Originals/
+# Debugger
+*.log
+*.inx
 # MPLAB X IDE
 build/
 dist/
