@@ -8,16 +8,27 @@ second.
 To work properly signal must be in proper range from minimum V<sub>ss</sub>=0V to 
 maximum V<sub>dd</sub>=3.3V and it must cross-over 1.65V (1/2 of Vdd) on every period.
 
-WARNING! There is currently weird issue that Comparator interrupts occurs on EVERY transition
-(should occur only on one selected transition). The cause is currently unknown. Here is output from
-Digilent Scope:
+> WARNING! There is currently weird issue that Comparator interrupts occurs on EVERY transition
+> (should occur only on one selected transition). The cause is currently unknown.
+> 
 
-TODO:
+Comparator input and output:
 
+![Comparator on Scope](digilentad2/pic32mx-comp-scope.gif)
+
+Notice that Comparator interrupt (`C1INT_TOGGLE`) occurs on every transition which should
+not happen...
+
+Signal generator configuration:
+
+![Signal Generator](digilentad2/pic32mx-gen.gif)
+
+Workspace file for [Digilent Analog Discovery 2 Scope][Digilent AD2]
+is on: [digilentad2/PIC32MX-COMP.dwf3work](digilentad2/PIC32MX-COMP.dwf3work])
 
 Project status:
 - RA0 RED LED blinking at 1/2 Hz using Core timer.
-- Also Dumps Uptime information on UART2 (you will need suitable
+- Also Dumps Uptime and Signal frequency information on UART2 (you will need suitable
   USB <-> UART cable - see text below)
 - PIN25 CVREFOUT should have output voltage 1.65V (threshold for comparator)
 - measures signal frequency on Pin 6 C1INB (cross-over 1.65V, minimum 0V, maximum 3.3V)
