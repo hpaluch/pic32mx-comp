@@ -1,46 +1,86 @@
 # PIC32MX Comparator
 
-Here is example how to use Comparator on PIC32MX to measure signal frequency.
-We will simply count number of Comparator interrupts per
-second to get signal frequency in Hz and print it on UART every
-second.
+Here is example how to (not) use Comparator on PIC32MX to measure signal
+frequency.  We simply count number of Comparator interrupts per second to get
+signal frequency in Hz and print it on UART every second.
 
 To work properly signal must be in proper range from minimum V<sub>ss</sub>=0V to 
 maximum V<sub>dd</sub>=3.3V and it must cross-over 1.65V (1/2 of Vdd) on every period.
 
-> WARNING! There is currently weird issue that Comparator interrupts occurs on EVERY transition
-> (should occur only on one selected transition). The cause is currently unknown.
-> 
+And more important: input signal has to have some *minimum slope* to *avoid oscillations*
+of Comparator! See text below for examples.
 
-Comparator input and output:
+# Proper comparator operation
 
-![Comparator on Scope](digilentad2/pic32mx-comp-scope.gif)
+Here is example of Proper Comparator operation - when using Square signal on 
+Inverting comparator input `C1INB` (I use inverting input because it is only
+Comparator configuration that allows use `CVref` reference voltage source).
 
-Notice that Comparator interrupt (`C1INT_TOGGLE`) occurs on every transition which should
-not happen...
+![Square Comparator on Scope](digilentad2/pic32mx-comp-scope-square.gif)
 
-Signal generator configuration:
+Notice that Comparator interrupt (`C1INT_TOGGLE`) occurs only on every *second* transition
+(high-to-low transition because we use Inverting input) - which is as it was configured
+on MCC Harmony tool.
 
-![Signal Generator](digilentad2/pic32mx-gen.gif)
+Here is Square wave signal generator Configuration:
+
+![Square Signal Generator](digilentad2/pic32mx-gen-square.gif)
 
 Workspace file for [Digilent Analog Discovery 2 Scope][Digilent AD2]
-is on: [digilentad2/PIC32MX-COMP.dwf3work](digilentad2/PIC32MX-COMP.dwf3work])
+is on: [digilentad2/PIC32MX-COMP-Square.dwf3work](digilentad2/PIC32MX-COMP-Square.dwf3work)
+
+# Incorrect comparator operation
+
+When signal slope is too slow (for example using Sine wave) you may encounter incorrect
+comparator behaviour as shown on scope below:
+
+![Sine Comparator on Scope](digilentad2/pic32mx-comp-scope-sine.gif)
+
+Notice that Comparator interrupt (`C1INT_TOGGLE`) occurs on EVERY comparator
+transition - which is wrong! Actually there are at least 2 forth and back
+transitions of comparator on very cross - but it is impossible to detect them
+with common scope (even using very short Time base)!
+
+In such case we will incorrectly show double frequency on UART output!
+
+Here is signal generator for Sine:
+
+![Sine Signal Generator](digilentad2/pic32mx-gen-sine.gif)
+
+Workspace file for [Digilent Analog Discovery 2 Scope][Digilent AD2]
+is on: [digilentad2/PIC32MX-COMP-Sine.dwf3work](digilentad2/PIC32MX-COMP-Sine.dwf3work)
+
+Possible fixes:
+- I plan to implement hysteresis using positive feedback (basically connecting
+  inverting C1OUT to inverting C1INB via resistor which should add hysteresis).
+- I'm currently studying `DS41215C-page 7`
+  from: http://ww1.microchip.com/downloads/en/DeviceDoc/41215c.pdf
+
+# Project status
 
 Project status:
+- OK: reporting input signal frequency (number of high-to-low comparator transition
+  interrupts per second)
+- signal generator should be connected to Pin 6 C1INB (cross-over 1.65V, minimum 0V, maximum 3.3V)
+  Recommended: use 1 kOhm serial protective resistor between generator and `C1INB` input.
+- PROBLEM: When signal slope is too slow it will cause comparator oscillations which will
+  be observed as double interrupts (looks like interrupt is generated on every transition,
+  because of oscillations on such transitions). So measured frequency on UART output will
+  be 2 times higher then real frequency (!)
+
+Additionally:
 - RA0 RED LED blinking at 1/2 Hz using Core timer.
-- Also Dumps Uptime and Signal frequency information on UART2 (you will need suitable
-  USB <-> UART cable - see text below)
+- PIN18 C1OUT - current comparator output (for verification)
 - PIN25 CVREFOUT should have output voltage 1.65V (threshold for comparator)
-- measures signal frequency on Pin 6 C1INB (cross-over 1.65V, minimum 0V, maximum 3.3V)
 
 
 Example UART output (115200 baud, 8 data-bits, 1 stop, no parity, no flow control) on Pin21 U2TX:
 ```
-../src/main.c:74 starting app v1.02
+../src/main.c:74 starting app v1.03
  CPU Frequency=48000004 [Hz]
- Uptime=3 [s] delta CMP1=1994 f=997.0 [Hz]
- Uptime=4 [s] delta CMP1=1993 f=996.5 [Hz]
- Uptime=5 [s] delta CMP1=1993 f=996.5 [Hz]
+ Uptime=3 [s] delta CMP1=997 [Hz]
+ Uptime=4 [s] delta CMP1=996 [Hz]
+ Uptime=5 [s] delta CMP1=997 [Hz]
  ...
 ```
 
@@ -70,14 +110,16 @@ Used CPU blocks:
   - it is similar to SYSTICK on ARM Cortex-M CPUs
 - `CVREF`
   - voltage reference (threshold) for comparator
-  - set to 1.65V (half of Vdd = 3.3/2) using CVRR=1 and CVRCON=12
+  - set to 1.65V (half of Vdd = 3.3/2) using `CVRR=1` and `CVRCON=12`
   - measured 1.63V on Pin 25 CV<sub>REFOUT</sub> with DMM
 - `CMP1`
   - Comparator 1
-  - C+IN (non-inverting input) connected to CVREF
-  - C-IN (inverting input) connected to C1INB pin
-  - generates interrupt on low-to-high
-  - CVOUT available to check behaviour
+  - `C+IN` (non-inverting input) connected to CVREF
+  - `C-IN` (inverting input) connected to `C1INB` pin (because CVREF is allowed
+    to be connected to non-inverting input only - for some reason).
+  - generates interrupt on low-to-high transition, but actually opposite because we
+    use inverting input for signal.
+  - `CVOUT` available to check behaviour
 
 Thanks to "After Build" command you can see generated assembler
 listing under:
@@ -89,7 +131,7 @@ build in MPLAB Toolbar.
 
 # Hardware requirements
 
-* [Digilent Analog Discovery 2 Scope][Digilent AD2]
+* [Digilent Analog Discovery 2 Scope][Digilent AD2] - using signal generator, scope and 2 digital inputs
 * [Microstick II][PIC Microstick II]  demo board
 * [PIC32MX250F128B SPDIP][PIC32MX250F128B] inserted into socket U5
   (included with board, should be default)
@@ -164,7 +206,6 @@ Wiring Microstick II to Digilent Analog Discovery 2 scope/generator:
 | 27 | GND | `2-` 2nd channel inverting input |
 
 
-
 # Troubleshooting
 
 ## "This is not Prolific" Error
@@ -186,6 +227,11 @@ For Windows 10 there exist easy workaround:
 - click on Next
 - click Yes on scary Warning that you really want use this driver
 - now Windows 10 Generic driver should be installed and working
+
+## Measured frequency is 2 times higher
+
+If measured frequency is 2 times higher it is very likely that
+comparator is oscillating. I plan to fix that with adding hysteresis (TODO).
 
 [Digilent AD2]: https://digilent.com/shop/analog-discovery-2-100ms-s-usb-oscilloscope-logic-analyzer-and-variable-power-supply/
 [MIPS32 M4K Manual]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00249-2B-M4K-SUM-02.03.pdf

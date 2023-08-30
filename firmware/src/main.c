@@ -28,7 +28,7 @@
 #include "definitions.h"                // SYS function prototypes
 
 
-#define PROG_VERSION 102 // 123 = 1.23
+#define PROG_VERSION 103 // 123 = 1.23
 
 volatile bool gTimerTicked=false;
 volatile uint32_t gTimer1s = 0; // Timer incremented every second
@@ -95,9 +95,8 @@ int main ( void )
         cmpDelta = cmp1Count-oldCmp1Count;
         oldCmp1Count=cmp1Count;
         // show uptime + delta + freq
-        // WARNING! There is interrupt misbehaviour (on every edge instead of positive edge)
-        printf(" Uptime=%u [s] delta CMP1=%u f=%u.%01u [Hz]\r\n",
-                gTimer1s,cmpDelta,cmpDelta/2,5*(cmpDelta&1));
+        printf(" Uptime=%u [s] delta CMP1=%u [Hz]\r\n",
+                gTimer1s,cmpDelta);
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
     }
