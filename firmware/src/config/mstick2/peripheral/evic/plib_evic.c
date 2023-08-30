@@ -57,6 +57,7 @@ void EVIC_Initialize( void )
 
     /* Set up priority and subpriority of enabled interrupts */
     IPC0SET = 0x4U | 0x0U;  /* CORE_TIMER:  Priority 1 / Subpriority 0 */
+    IPC6SET = 0x8000000U | 0x0U;  /* COMPARATOR_1:  Priority 2 / Subpriority 0 */
 
 
 }

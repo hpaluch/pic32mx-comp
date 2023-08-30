@@ -1,23 +1,35 @@
 # PIC32MX Comparator
 
-We will use comparator on PIC32MX to measure frequency of input
-signal. We will simply count number of Comparator interrupts per
+Here is example how to use Comparator on PIC32MX to measure signal frequency.
+We will simply count number of Comparator interrupts per
 second to get signal frequency in Hz and print it on UART every
 second.
 
+To work properly signal must be in proper range from minimum V<sub>ss</sub>=0V to 
+maximum V<sub>dd</sub>=3.3V and it must cross-over 1.65V (1/2 of Vdd) on every period.
+
+WARNING! There is currently weird issue that Comparator interrupts occurs on EVERY transition
+(should occur only on one selected transition). The cause is currently unknown. Here is output from
+Digilent Scope:
+
+TODO:
+
+
 Project status:
-- Work in Progress
-- RED LED blinking at 1/2 Hz using core timer.
+- RA0 RED LED blinking at 1/2 Hz using Core timer.
 - Also Dumps Uptime information on UART2 (you will need suitable
   USB <-> UART cable - see text below)
+- PIN25 CVREFOUT should have output voltage 1.65V (threshold for comparator)
+- measures signal frequency on Pin 6 C1INB (cross-over 1.65V, minimum 0V, maximum 3.3V)
+
 
 Example UART output (115200 baud, 8 data-bits, 1 stop, no parity, no flow control) on Pin21 U2TX:
 ```
-../src/main.c:63 starting app v1.01
- CPU Frequency=47999998 [Hz]
- Uptime=3 [s]
- Uptime=4 [s]
- Uptime=5 [s]
+../src/main.c:74 starting app v1.02
+ CPU Frequency=48000004 [Hz]
+ Uptime=3 [s] delta CMP1=1994 f=997.0 [Hz]
+ Uptime=4 [s] delta CMP1=1993 f=996.5 [Hz]
+ Uptime=5 [s] delta CMP1=1993 f=996.5 [Hz]
  ...
 ```
 
@@ -27,10 +39,15 @@ Used CPU Pins:
 | --- | --- | --- |
 | 1 | /MCLR | Reserved for CPU RESET |
 | 2 | RA0 | LED blinking at 1/2 Hz frequency |
+| 3 | RA1 | Output Toggle on CMP interrupt |
 | 4 | PGED1 | Reserved for Programmer/Debugger Data |
 | 5 | PGEC1 | Reserved for Programmer/Debugger Clock |
+| 6 | C1INB | Signal input to comparator from 0V to 3.3V |
+| 18 | C1OUT | Comparator output (for verification) |
 | 21 | U2TX | PIC UART Output (PC Input!) |
 | 22 | U2RX | PIC UART Input (PC Output!) |
+| 25 | CVREFOUT | Reference for CMP, should be  1.65V (3.3V/2) |
+
 
 Used CPU blocks:
 - `MIPS Core Timer` at 1 Hz
@@ -40,6 +57,16 @@ Used CPU blocks:
   - please see Page 73 (real page 83) of 
     [MIPS32(R) M4K Manual][MIPS32 M4K Manual]
   - it is similar to SYSTICK on ARM Cortex-M CPUs
+- `CVREF`
+  - voltage reference (threshold) for comparator
+  - set to 1.65V (half of Vdd = 3.3/2) using CVRR=1 and CVRCON=12
+  - measured 1.63V on Pin 25 CV<sub>REFOUT</sub> with DMM
+- `CMP1`
+  - Comparator 1
+  - C+IN (non-inverting input) connected to CVREF
+  - C-IN (inverting input) connected to C1INB pin
+  - generates interrupt on low-to-high
+  - CVOUT available to check behaviour
 
 Thanks to "After Build" command you can see generated assembler
 listing under:
@@ -51,6 +78,7 @@ build in MPLAB Toolbar.
 
 # Hardware requirements
 
+* [Digilent Analog Discovery 2 Scope][Digilent AD2]
 * [Microstick II][PIC Microstick II]  demo board
 * [PIC32MX250F128B SPDIP][PIC32MX250F128B] inserted into socket U5
   (included with board, should be default)
@@ -103,6 +131,29 @@ Use these parameters when connecting Putty to USB/UART Adapter:
 - Parity: `none`
 - Flow control: `None`
 
+Wiring Microstick II and DMM (to check Voltage reference for comparator)
+
+| Microstick II Pin | Signal | DMM |
+| --- | --- | --- |
+| 27 | GND | GND |
+| 25 | CVREFOUT | Voltage Input |
+
+Your DMM should show nominal voltage 1.65V (V<sub>dd</sub>/2 = 3.3/2 = 1.65 )
+
+Wiring Microstick II to Digilent Analog Discovery 2 scope/generator:
+
+| Microstick II Pin | Signal | Digilent Signal |
+| --- | --- | --- |
+| 3 | RA1 | Digital 0 input (toggles on Comparator interrupt) |
+| 6 | C1INB | W1 generator output through 1 kOhm protective resistor |
+| 6 | C1INB | 1+ Scope 1st channel|
+| 18 | C1OUT | 2+ Scope 2nd channel|
+| 27 | GND | GND |
+| 27 | GND | `1-` 1st channel inverting input |
+| 27 | GND | `2-` 2nd channel inverting input |
+
+
+
 # Troubleshooting
 
 ## "This is not Prolific" Error
@@ -125,7 +176,7 @@ For Windows 10 there exist easy workaround:
 - click Yes on scary Warning that you really want use this driver
 - now Windows 10 Generic driver should be installed and working
 
-
+[Digilent AD2]: https://digilent.com/shop/analog-discovery-2-100ms-s-usb-oscilloscope-logic-analyzer-and-variable-power-supply/
 [MIPS32 M4K Manual]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00249-2B-M4K-SUM-02.03.pdf
 [MIPS32 M4K DTS]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00247-2B-M4K-DTS-02.01.pdf
 [MIPS32 BIS]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00086-2B-MIPS32BIS-AFP-05.04.pdf

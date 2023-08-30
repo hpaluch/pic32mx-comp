@@ -196,6 +196,10 @@ void SYS_Initialize ( void* data )
     CORETIMER_Initialize();
 	UART2_Initialize();
 
+	CVR_Initialize();
+
+	CMP_Initialize();
+
 
 
     /* MISRAC 2012 deviation block start */

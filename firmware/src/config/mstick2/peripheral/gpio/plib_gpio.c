@@ -60,10 +60,11 @@ void GPIO_Initialize ( void )
 {
     /* PORTA Initialization */
     LATA = 0x0; /* Initial Latch Value */
-    TRISACLR = 0x1; /* Direction Control */
-    ANSELACLR = 0x1; /* Digital Mode Enable */
+    TRISACLR = 0x3; /* Direction Control */
+    ANSELACLR = 0x3; /* Digital Mode Enable */
 
     /* PORTB Initialization */
+    ANSELBCLR = 0x4; /* Digital Mode Enable */
 
 
 
@@ -72,6 +73,7 @@ void GPIO_Initialize ( void )
 
     /* PPS Output Remapping */
     RPB10R = 2;
+    RPB9R = 7;
 
 
 }

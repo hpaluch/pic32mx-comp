@@ -1,30 +1,21 @@
 /*******************************************************************************
-  SYS CLK Static Functions for Clock System Service
+  Comparator (CMP) Peripheral Library (PLIB)
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    plib_clk.c
+    plib_cmp.c
 
   Summary:
-    SYS CLK static function implementations for the Clock System Service.
+    CMP Source File
 
   Description:
-    The Clock System Service provides a simple interface to manage the
-    oscillators on Microchip microcontrollers. This file defines the static
-    implementation for the Clock System Service.
-
-  Remarks:
-    Static functions incorporate all system clock configuration settings as
-    determined by the user via the Microchip Harmony Configurator GUI.
-    It provides static version of the routines, eliminating the need for an
-    object ID or object handle.
-
-    Static single-open interfaces also eliminate the need for the open handle.
+    None
 
 *******************************************************************************/
 
+// DOM-IGNORE-BEGIN
 /*******************************************************************************
 * Copyright (C) 2019 Microchip Technology Inc. and its subsidiaries.
 *
@@ -47,58 +38,114 @@
 * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
+// DOM-IGNORE-END
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: Include Files
+// Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
 
-#include "device.h"
-#include "plib_clk.h"
+#include "plib_cmp.h"
+#include "interrupts.h"
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: File Scope Functions
+// Section: Global Data
 // *****************************************************************************
 // *****************************************************************************
 
+volatile static CMP_OBJECT cmp1Obj;
+
 // *****************************************************************************
-/* Function:
-    void CLK_Initialize( void )
+// *****************************************************************************
+// Section: CMP Implementation
+// *****************************************************************************
+// *****************************************************************************
 
-  Summary:
-    Initializes hardware and internal data structure of the System Clock.
-
-  Description:
-    This function initializes the hardware and internal data structure of System
-    Clock Service.
-
-  Remarks:
-    This is configuration values for the static version of the Clock System
-    Service module is determined by the user via the MHC GUI.
-
-    The objective is to eliminate the user's need to be knowledgeable in the
-    function of the 'configuration bits' to configure the system oscillators.
-*/
-
-void CLK_Initialize( void )
+void CMP_Initialize(void)
 {
+    /*  Setup CM1CON    */
+    /*  CCH     = 0    */
+    /*  CREF    = 1    */
+    /*  EVPOL   = 1    */
+    /*  CPOL    = false    */
+    /*  COE     = true    */
+    CM1CON = 0x4050;
 
-    /* Code for fuse settings can be found in "initialization.c" */
+    /* Enable Comparator 1 Interrupt */
+    IEC1SET = _IEC1_CMP1IE_MASK;
 
+    /*  Setup CM2CON    */
+    /*  CCH     = 0    */
+    /*  CREF    = 0    */
+    /*  EVPOL   = 0    */
+    /*  CPOL    = false    */
+    /*  COE     = false    */
+    CM2CON = 0x0;
 
-    /* Wait for PLL to be locked */
-    while(OSCCONbits.SLOCK == 0U)
-                 {
-                      /* Nothing to do */
-                 }
+    /*  Setup CM3CON    */
+    /*  CCH     = 0    */
+    /*  CREF    = 0    */
+    /*  EVPOL   = 0    */
+    /*  CPOL    = false    */
+    /*  COE     = false    */
+    CM3CON = 0x0;
 
-    /* Peripheral Module Disable Configuration */
-    PMD1 = 0x101U;
-    PMD2 = 0x0U;
-    PMD3 = 0x1f001fU;
-    PMD4 = 0x1fU;
-    PMD5 = 0x1030301U;
-    PMD6 = 0x10001U;
+    /* Clear Idle Control */
+    CMSTATCLR = _CMSTAT_SIDL_MASK;
 }
+
+bool CMP_StatusGet(CMP_STATUS_SOURCE ch_status)
+{
+    return ((CMSTAT & ch_status) != 0U);
+}
+
+void CMP_1_CompareEnable(void)
+{
+    CM1CONSET = _CM1CON_ON_MASK;
+}
+
+void CMP_1_CompareDisable(void)
+{
+    CM1CONCLR = _CM1CON_ON_MASK;
+}
+
+void CMP_1_CallbackRegister(CMP_CALLBACK callback, uintptr_t context)
+{
+    cmp1Obj.callback = callback;
+
+    cmp1Obj.context = context;
+}
+
+void __attribute__((used)) COMPARATOR_1_InterruptHandler(void)
+{
+    IFS1CLR = _IFS1_CMP1IF_MASK; //Clear IRQ flag
+
+    if(cmp1Obj.callback != NULL)
+    {
+        uintptr_t context = cmp1Obj.context;
+        cmp1Obj.callback(context);
+    }
+}
+
+void CMP_2_CompareEnable(void)
+{
+    CM2CONSET = _CM2CON_ON_MASK;
+}
+
+void CMP_2_CompareDisable(void)
+{
+    CM2CONCLR = _CM2CON_ON_MASK;
+}
+
+void CMP_3_CompareEnable(void)
+{
+    CM3CONSET = _CM3CON_ON_MASK;
+}
+
+void CMP_3_CompareDisable(void)
+{
+    CM3CONCLR = _CM3CON_ON_MASK;
+}
+

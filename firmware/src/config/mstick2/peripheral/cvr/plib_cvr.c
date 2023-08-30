@@ -1,20 +1,20 @@
 /*******************************************************************************
- System Interrupts File
+  Comparator Voltage Reference (CVR) Peripheral Library Interface Source File
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    interrupt.h
+    plib_cvr.c
 
   Summary:
-    Interrupt vectors mapping
+    CVR Source File
 
   Description:
-    This file contains declarations of device vectors used by Harmony 3
- *******************************************************************************/
+    None
 
-// DOM-IGNORE-BEGIN
+*******************************************************************************/
+
 /*******************************************************************************
 * Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
 *
@@ -36,30 +36,40 @@
 * FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
 * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
- *******************************************************************************/
-// DOM-IGNORE-END
-
-#ifndef INTERRUPTS_H
-#define INTERRUPTS_H
+*******************************************************************************/
+#include "plib_cvr.h"
 
 // *****************************************************************************
-// *****************************************************************************
-// Section: Included Files
-// *****************************************************************************
-// *****************************************************************************
-#include <stdint.h>
-
-
 
 // *****************************************************************************
-// *****************************************************************************
-// Section: Handler Routines
+// Section: CVR Implementation
 // *****************************************************************************
 // *****************************************************************************
 
-void CORE_TIMER_InterruptHandler( void );
-void COMPARATOR_1_InterruptHandler( void );
+void CVR_Initialize (void)
+{
+	/*Setup CVRCON		*/
+	/* CVR 		= 12	*/
+	/* CVRSS 	= 0	*/
+	/* CVRR		= 1	*/
+	/* CVROE 	= true	*/
+	
+	CVRCON = 0x6c;
+}
 
+void CVR_Start (void)
+{
+	CVRCONSET = _CVRCON_ON_MASK;
+}
 
+void CVR_Stop (void)
+{
+	CVRCONCLR = _CVRCON_ON_MASK;
+}
 
-#endif // INTERRUPTS_H
+/* Function to update CVREF Value */
+void CVR_UpdateValue (uint8_t value)
+{
+    uint8_t Xvalue = (value & (uint8_t)_CVRCON_CVR_MASK);
+	CVRCONbits.CVR = Xvalue;
+}

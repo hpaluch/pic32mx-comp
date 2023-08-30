@@ -67,6 +67,7 @@
 // *****************************************************************************
 // *****************************************************************************
 void CORE_TIMER_Handler (void);
+void COMPARATOR_1_Handler (void);
 
 
 // *****************************************************************************
@@ -77,6 +78,11 @@ void CORE_TIMER_Handler (void);
 void __ISR(_CORE_TIMER_VECTOR, ipl1SOFT) CORE_TIMER_Handler (void)
 {
     CORE_TIMER_InterruptHandler();
+}
+
+void __ISR(_COMPARATOR_1_VECTOR, ipl2SOFT) COMPARATOR_1_Handler (void)
+{
+    COMPARATOR_1_InterruptHandler();
 }
 
 

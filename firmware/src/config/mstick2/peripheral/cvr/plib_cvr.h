@@ -1,20 +1,20 @@
 /*******************************************************************************
- System Interrupts File
+  Comparator Voltage Reference (CVR) Peripheral Library Interface Header File
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    interrupt.h
+    plib_cvr.h
 
   Summary:
-    Interrupt vectors mapping
+    CVR PLIB Header File
 
   Description:
-    This file contains declarations of device vectors used by Harmony 3
- *******************************************************************************/
+    None
 
-// DOM-IGNORE-BEGIN
+*******************************************************************************/
+
 /*******************************************************************************
 * Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
 *
@@ -36,30 +36,42 @@
 * FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
 * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
- *******************************************************************************/
+*******************************************************************************/
+
+#ifndef PLIB_CVR_H
+#define PLIB_CVR_H
+
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include "device.h"
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+    extern "C" {
+#endif
 // DOM-IGNORE-END
 
-#ifndef INTERRUPTS_H
-#define INTERRUPTS_H
 
 // *****************************************************************************
-// *****************************************************************************
-// Section: Included Files
-// *****************************************************************************
-// *****************************************************************************
-#include <stdint.h>
-
-
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Handler Routines
+// Section: Interface
 // *****************************************************************************
 // *****************************************************************************
 
-void CORE_TIMER_InterruptHandler( void );
-void COMPARATOR_1_InterruptHandler( void );
+/*************************** CVR API ***************************/
 
+void CVR_Initialize (void);
 
+void CVR_Start (void);
 
-#endif // INTERRUPTS_H
+void CVR_Stop (void);
+
+void CVR_UpdateValue (uint8_t value);
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+    }
+#endif
+
+// DOM-IGNORE-END
+#endif // PLIB_CVR_H

@@ -10,8 +10,14 @@
             <logicalFolder name="clk" displayName="clk" projectFiles="true">
               <itemPath>../src/config/mstick2/peripheral/clk/plib_clk.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="cmp" displayName="cmp" projectFiles="true">
+              <itemPath>../src/config/mstick2/peripheral/cmp/plib_cmp.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="coretimer" displayName="coretimer" projectFiles="true">
               <itemPath>../src/config/mstick2/peripheral/coretimer/plib_coretimer.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="cvr" displayName="cvr" projectFiles="true">
+              <itemPath>../src/config/mstick2/peripheral/cvr/plib_cvr.h</itemPath>
             </logicalFolder>
             <logicalFolder name="evic" displayName="evic" projectFiles="true">
               <itemPath>../src/config/mstick2/peripheral/evic/plib_evic.h</itemPath>
@@ -49,8 +55,14 @@
             <logicalFolder name="clk" displayName="clk" projectFiles="true">
               <itemPath>../src/config/mstick2/peripheral/clk/plib_clk.c</itemPath>
             </logicalFolder>
+            <logicalFolder name="cmp" displayName="cmp" projectFiles="true">
+              <itemPath>../src/config/mstick2/peripheral/cmp/plib_cmp.c</itemPath>
+            </logicalFolder>
             <logicalFolder name="coretimer" displayName="coretimer" projectFiles="true">
               <itemPath>../src/config/mstick2/peripheral/coretimer/plib_coretimer.c</itemPath>
+            </logicalFolder>
+            <logicalFolder name="cvr" displayName="cvr" projectFiles="true">
+              <itemPath>../src/config/mstick2/peripheral/cvr/plib_cvr.c</itemPath>
             </logicalFolder>
             <logicalFolder name="evic" displayName="evic" projectFiles="true">
               <itemPath>../src/config/mstick2/peripheral/evic/plib_evic.c</itemPath>
@@ -125,6 +137,7 @@
       <C32>
         <property key="additional-warnings" value="true"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="false"/>
         <property key="enable-symbols" value="true"/>
@@ -180,6 +193,7 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -219,6 +233,7 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>
@@ -268,6 +283,7 @@
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
+        <property key="firmware.download.all" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.configurationmemory" value="true"/>
         <property key="memories.dataflash" value="true"/>
